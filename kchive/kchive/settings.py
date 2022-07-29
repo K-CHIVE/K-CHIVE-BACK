@@ -29,11 +29,16 @@ def get_secret(setting, secrets=secrets):
         error_msg = "Set the {} environment variable".format(setting)
         raise ImproperlyConfigured(error_msg)
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = get_secret("SECRET_KEY")
+API_KEY = get_secret("API_KEY")
+API_KEY_SECRET = get_secret("API_KEY_SECRET")
+ACCESS_TOKEN = get_secret("ACCESS_TOKEN")
+ACCESS_TOKEN_SECRET = get_secret("ACCESS_TOKEN_SECRET")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
