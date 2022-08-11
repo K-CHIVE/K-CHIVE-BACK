@@ -1,33 +1,8 @@
-Skip to content
-Search or jump to…
-Pulls
-Issues
-Marketplace
-Explore
- 
-@Sonjeongbeom 
-Sonjeongbeom
-/
-DjangoForLightsail
-Public
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-More
-DjangoForLightsail/.gitignore
-@Sonjeongbeom
-Sonjeongbeom initial commit
-Latest commit 095adf6 18 days ago
- History
- 1 contributor
-175 lines (142 sloc)  3.5 KB
-
 # Created by https://www.toptal.com/developers/gitignore/api/django
 # Edit at https://www.toptal.com/developers/gitignore?templates=django
+
+### Authentication ###
+secrets.json
 
 ### Django ###
 *.log
@@ -38,7 +13,6 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 media
-secrets.json
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.
@@ -201,18 +175,3 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
-secrets.json
