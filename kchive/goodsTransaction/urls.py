@@ -1,6 +1,6 @@
 from django.urls import path
-from goodsTransaction import views
+from .views import *
 
 urlpatterns = [
-    path('', views.main, name="main"),
+    path('', GoodsListView.as_view()),
 ]
