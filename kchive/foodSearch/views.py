@@ -1,3 +1,7 @@
+#import os
+#os.environ.setdefault('DJANGO_SETTINGS_MODULE','kchive.settings')
+
+from ast import keyword
 from rest_framework.views import APIView
 from common.models import *
 from django.conf import settings
@@ -16,7 +20,7 @@ class RestaurantListView(APIView) :
     # 필터 목록 (127.0.0.1:8000/food-search?group=그룹명&member=멤버명&search=검색어&startDate=시작날짜&endDate=종료날짜)
     def get(self, request) :
         api = connect_api()
-
+    
         # 그룹은 무조건 있어야함
         group = Group.objects.filter(name = self.request.query_params.get('group')).first()
         api_results = []
