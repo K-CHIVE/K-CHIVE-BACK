@@ -60,6 +60,7 @@ INSTALLED_APPS = [
     'foodSearch',
     'imageSearch',
     'goodsTransaction',
+    'common',
 
     # drf
     'rest_framework',

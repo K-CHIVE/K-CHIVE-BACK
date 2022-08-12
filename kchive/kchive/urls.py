@@ -21,4 +21,5 @@ urlpatterns = [
     path('image-search/', include('imageSearch.urls')),
     path('food-search/', include('foodSearch.urls')),
     path('goods-transaction/', include('goodsTransaction.urls')),
+    path('common/', include('common.urls')),
 ]
