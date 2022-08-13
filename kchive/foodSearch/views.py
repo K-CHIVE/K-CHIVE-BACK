@@ -7,45 +7,59 @@ from pprint import pprint
 from rest_framework import viewsets
 from django.http import HttpResponse
 from datetime import date
-from common.views import connect_api, get_tweet_by_keyword
+from common.views import connect_api, get_tweet_by_keyword, parse_tweet_response
 # Create your views here.
-
     
 class RestaurantListView(APIView) :
-    # GET 요청 시 params로 필터 처리해야함 
+
+    def group_search(self, api, group_tag) :
+        group_results = []
+        tweets = get_tweet_by_keyword(api, group_tag)
+
+        for i, tweet in enumerate(tweets) :
+            if 'retweeted_status' in tweet._json : 
+                tmp = parse_tweet_response(tweet._json)                    
+                group_results.append(tmp)     
+
+        return sorted(group_results, key = lambda x : x['created_at'], reverse=True)
+
+    def member_search(self, api, member_tag) :
+        print(member_tag)
+        member_results = []
+        tweets = get_tweet_by_keyword(api, member_tag)
+
+        for i, tweet in enumerate(tweets) :
+            if 'retweeted_status' in tweet._json : 
+                tmp = parse_tweet_response(tweet._json)
+                member_results.append(tmp)     
+
+        return sorted(member_results, key = lambda x : x['created_at'], reverse=True)
+   
+
     # 필터 목록 (127.0.0.1:8000/food-search?group=그룹명&member=멤버명&search=검색어&startDate=시작날짜&endDate=종료날짜)
     def get(self, request) :
         api = connect_api()
 
-        # 그룹은 무조건 있어야함
+        # 그룹은 무조건 있어야함 -> 일단 지금은 그룹 당 태그 하나로만 검색
         group = Group.objects.filter(name = self.request.query_params.get('group')).first()
-        api_results = []
+        member = Member.objects.filter(group = group).filter(name = self.request.query_params.get('member')).first()
 
-        if group : 
-            apiResult = get_tweet_by_keyword(api, group.tag1)
-            for i, tweet in enumerate(apiResult) :
-                if 'retweeted_status' in tweet._json : 
-                    tmp = {}
-                    tmp['created_at'] = tweet._json['retweeted_status']['created_at']
-                    hashtags = tweet._json['retweeted_status']['entities']['hashtags']
-                    tmp['hashtags'] = [hashtag['text'] for hashtag in hashtags]
-                    tmp['full_text'] = tweet._json['retweeted_status']['full_text']
-                    tmp['retweet_count'] = tweet._json['retweeted_status']['retweet_count']
-                    tmp['favorite_count'] = tweet._json['retweeted_status']['favorite_count']
-                    tmp['user_id'] = tweet._json['user']['id']
-                    tmp['user_name'] = tweet._json['user']['name']
-                    tmp['user_profile_image_url'] = tweet._json['user']['profile_image_url']
-
-                    if 'extended_entities' in tweet._json :
-                        tmp['tweet_url'] = tweet._json['retweeted_status']['extended_entities']['media'][0]['expanded_url']
-                        tmp['media_url'] = tweet._json['retweeted_status']['extended_entities']['media'][0]['media_url']
-                    api_results.append(tmp)            
-
-            api_results = sorted(api_results, key = lambda x : x['created_at'], reverse=True)
-            return HttpResponse(status = 200, content=json.dumps(api_results))  
-        
-        else :
+        if not group : 
             return HttpResponse(status = 400)
+        
+        if member and member.tag1 : 
+            member_results = self.member_search(api, member.tag1)
+            return HttpResponse(status = 200, content=json.dumps(member_results))
+
+        else : 
+            group_results = self.group_search(api, group.tag1)
+            return HttpResponse(status = 200, content=json.dumps(group_results))  
+        
+
+
+        
 
         # 해야할 일
         # 홍대, 신촌, 압구정 등 키워드를 찾은 뒤 지역 필터를 실행
+        # 카페 or 식당 -> 이게 근데 가능해 ?
+        # 날짜
