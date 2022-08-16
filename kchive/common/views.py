@@ -8,6 +8,7 @@ from django.http import HttpResponse
 from datetime import date
 import tweepy
 import json
+from pprint import pprint
 
 # 그룹 리스트 반환
 class GroupListView(APIView) : 
@@ -59,7 +60,7 @@ def connect_api() :
     return api
 
 def get_tweet_by_keyword(api, keyword) :
-    cursor = tweepy.Cursor(api.search_tweets, keyword, tweet_mode = 'extended')
+    cursor = tweepy.Cursor(api.search_tweets, keyword, tweet_mode = 'extended', count=100)
     return cursor.items()
 
 # 트위터 response 전처리하는 함수
@@ -71,8 +72,6 @@ def parse_tweet_response(info) :
     tmp['hashtags'] = [hashtag['text'] for hashtag in hashtags]
     tmp['full_text'] = info['retweeted_status']['full_text']
 
-    # url 다시 찾아야함 원본 게시글 url
-    tmp['tweet_url'] = tmp['full_text'][tmp['full_text'].find('http'):]
     tmp['retweet_count'] = info['retweeted_status']['retweet_count']
     tmp['favorite_count'] = info['retweeted_status']['favorite_count']
     # tmp['user_name'] = info['user']['name']
@@ -80,10 +79,13 @@ def parse_tweet_response(info) :
     tmp['user_name'] = info['entities']['user_mentions'][0]['name']
     tmp['user_profile_image_url'] = info['user']['profile_image_url']
 
-    if 'extended_entities' in info :
+    if 'extended_entities' in info['retweeted_status'] :
         medias = info['retweeted_status']['extended_entities']['media']
         tmp['media_url'] = [media['media_url'] for media in medias]
     else :
         tmp['media_url'] = None
 
+    # url 다시 찾아야함 원본 게시글 url
+    # tmp['tweet_url'] = tmp['full_text'][tmp['full_text'].find('http'):]
+    tmp['tweet_url'] = 'https://twitter.com/' + tmp['user_screen_name'] + '/status/' + str(tmp['id'])
     return tmp
