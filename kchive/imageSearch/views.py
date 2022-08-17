@@ -1,4 +1,5 @@
 from ast import keyword
+from posixpath import split
 from rest_framework.views import APIView
 from common.models import *
 from django.conf import settings
@@ -12,6 +13,42 @@ from common.views import connect_api, get_tweet_by_keyword, parse_tweet_response
 from .models import GroupNotification
 # Create your views here.
 
+
+def datetonumber(date):
+    Dow,Month,Date,Time,Nation,Year=date.split()
+    MonthEng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+    for i,v in enumerate(MonthEng):
+        MonthEngDict={}
+        MonthEngDict[v]=str(i+1)
+    EngMonthinNum=MonthEngDict[Month]
+    DateintoNumber=Year[-1]+Year[-2]+EngMonthinNum+Date
+    return datetonumber
+        
+    # if Month='Jan':
+    #     Month='01'
+    # if Month='Feb':
+    #     Month='01'
+    # if Month='Mar':
+    #     Month='01'
+    # if Month='Apr':
+    #     Month='01'
+    # if Month='May':
+    #     Month='01'
+    # if Month='Jun':
+    #     Month='01'
+    # if Month='Jan':
+    #     Month='01'
+    # if Month='Jan':
+    #     Month='01'
+    # if Month='Jan':
+    #     Month='01'
+    # if Month='Jan':
+    #     Month='01'
+    # if Month='Jan':
+    #     Month='01'
+    
+
+
 searched_id=[]
 
 
@@ -23,7 +60,7 @@ def extract(rawresults):
         extractedresults={}
         extractedresults['user_name']=rawresults['entities']['user_mentions'][0]['name']
         extractedresults['user_screen_name']=rawresults['entities']['user_mentions'][0]['screen_name']
-        extractedresults['created_at']=rawresults['created_at']
+        extractedresults['created_at']=datetonumber(rawresults['created_at'])
         extractedresults['retweet_count']=rawresults['retweeted_status']['retweet_count']
         extractedresults['in_reply_to_status_id']=rawresults['in_reply_to_status_id']
         extractedresults['favorite_count']=rawresults['retweeted_status']['favorite_count']
@@ -55,7 +92,7 @@ def extractfantweets(rawresults):
             fantweetresult={}
             fantweetresult['user_name']=rawresults['entities']['user_mentions'][0]['name']
             fantweetresult['user_screen_name']=rawresults['entities']['user_mentions'][0]['screen_name']
-            fantweetresult['created_at']=rawresults['created_at']
+            fantweetresult['created_at']=datetonumber(rawresults['created_at'])
             fantweetresult['retweet_count']=rawresults['retweeted_status']['retweet_count']
             fantweetresult['in_reply_to_status_id']=rawresults['in_reply_to_status_id']
             fantweetresult['favorite_count']=rawresults['retweeted_status']['favorite_count']
