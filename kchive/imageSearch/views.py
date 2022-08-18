@@ -4,7 +4,7 @@ import json
 from django.http import HttpResponse
 from common.views import connect_api, get_tweet_by_keyword
 from .models import GroupNotification
-from functions import *
+from .functions import *
 # Create your views here.
 
 class ContentsListView(APIView):
