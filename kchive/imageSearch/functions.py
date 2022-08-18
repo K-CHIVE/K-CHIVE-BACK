@@ -14,126 +14,153 @@ from common.views import connect_api, get_tweet_by_keyword, parse_tweet_response
 from .models import GroupNotification
 import tweepy
 
-def text_without_hashtag(rawresult):
-    fulltext=rawresult['retweeted_status']['full_text']
-    hashtags=rawresult['retweeted_status']['entities']['hashtags']
-    textwithouthashtag=fulltext
-    for i in range(len(hashtags)):
-        textwithouthashtag=textwithouthashtag.replace('#'+hashtags[i]['text'],'')
-    return textwithouthashtag
-#원본 트윗을 넘겨주면 해시태그 없는 본문을 반환함
-
-def filter_by_daterange(startdate,enddate,objectdict):
-    time=objectdict['created_at']
-    if objectdict>=int(startdate) and objectdict<=int(enddate):
-        return objectdict
-    else:
-        return None
-
-#날짜범위와 트윗하나를 넘겨주면 범위에 맞는지 체크해서 걸러줌
-def filtered_by_daterange(startdate,enddate,objects):
-    resultsfilteredbydaterange=[]
-    for i in range(len(objects)):
-        resultsfilteredbydaterange.append(filter_by_daterange(startdate,enddate,objects[i]))
-    return resultsfilteredbydaterange
-
-
-
-def get_timeline_by_id(api,user):
-    timelines = tweepy.Cursor(api.user_timeline, id = user).items(100)
-    return timelines
-#계정 넘겨주면 타임라인 100개 iterator로 반환해줌
-
+searched_id=[]
+#daterangefilter
 def datetonumber(date):
     Dow,Month,Date,Time,Nation,Year=date.split()
     MonthEng=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
     MonthEngDict={}
+    
     for i,v in enumerate(MonthEng):
         MonthEngDict[v]='%02d'%(i+1)
+    
     EngMonthinNum=MonthEngDict[Month]
     DateintoNumber=Year[-1]+Year[-2]+EngMonthinNum+Date
-    return DateintoNumber
-        
     
+    return DateintoNumber
+    #createdat날짜형식을 6자리수로 바꿔줌
 
+def filter_by_daterange(startdate,enddate,objectdict):
+    time=objectdict['created_at']
 
-searched_id=[]
-
-
-def extract(rawresults):
-    if 'extended_entities' in rawresults:
-        searched_id.append(rawresults['id'])
-        extractedresults={}
-        extractedresults['user_name']=rawresults['entities']['user_mentions'][0]['name']
-        extractedresults['user_screen_name']=rawresults['entities']['user_mentions'][0]['screen_name']
-        extractedresults['created_at']=datetonumber(rawresults['created_at'])
-        extractedresults['retweet_count']=rawresults['retweeted_status']['retweet_count']
-        extractedresults['in_reply_to_status_id']=rawresults['in_reply_to_status_id']
-        extractedresults['favorite_count']=rawresults['retweeted_status']['favorite_count']
-        extractedresults['media_url']=rawresults['retweeted_status']['extended_entities']['media']
-        extractedresults['tweet_url']=rawresults['full_text'][rawresults['full_text'].find('http'):]
-        return extractedresults
+    if objectdict>=int(startdate) and objectdict<=int(enddate):
+        
+        return objectdict
+    
     else:
-        return None#맞나
+        
+        return None
+    #트윗하나가 해당 날짜 안에 들어있는지 확인하고 조건이 충족하면 반환해줌
+#searchtypefilter(hashtag)
+def text_without_hashtag(rawresult):
+    fulltext=rawresult['retweeted_status']['full_text']
+    hashtags=rawresult['retweeted_status']['entities']['hashtags']
+    textwithouthashtag=fulltext
+    
+    for i in range(len(hashtags)):
 
-    #gif는 나중에 추가 file 로 되어있는지 media로 되어있는지 확인
-    #사진을 누르면 해당 트윗으로 이동하게 url추가해야하나? yes
+        textwithouthashtag=textwithouthashtag.replace('#'+hashtags[i]['text'],'')
+    
+    return textwithouthashtag
+#원본 트윗(하나)을 넘겨주면 해시태그 없는 본문을 반환함
 
-def extractnotification(rawresults):
-    if rawresults['retweeted_status']['full_text']:
-        searched_id.append(rawresults['id'])
-        extractedresults={}
-        extractedresults['Group']=rawresults['entities']['user_mentions'][0]['name'] #해당 계정이 등록된 모델의 그룹이름으로 하는 것이 좋을까?
-        extractedresults['Notification']=rawresults['retweeted_status']['full_text']
+def filtered_by_daterange(startdate,enddate,objects):
+    resultsfilteredbydaterange=[]
+    
+    for i in range(len(objects)):
+        resultsfilteredbydaterange.append(filter_by_daterange(startdate,enddate,objects[i]))
+    
+    return resultsfilteredbydaterange
+#트윗들로 이루어진 리스트들 전체를 날짜내에 있는지 확인하고 걸러서 트윗들로 이루어진 리스트 반환
 
-        return extractedresults
+#contentssearch
+def extract(rawresult):
+    extractedresult={}
+    
+    if 'extended_entities' in rawresult:
+        searched_id.append(rawresult['id'])
+        extractedresult['user_name']=rawresult['entities']['user_mentions'][0]['name']
+        extractedresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
+        extractedresult['created_at']=datetonumber(rawresult['created_at'])
+        extractedresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
+        extractedresult['in_reply_to_status_id']=rawresult['in_reply_to_status_id']
+        extractedresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
+        extractedresult['media_url']=rawresult['retweeted_status']['extended_entities']['media']
+        extractedresult['tweet_url']=rawresult['full_text'][rawresult['full_text'].find('http'):]
+        
+        return extractedresult
+    
     else:
+        
+        return None
+    #트윗하나를 필요한정보만 추출해줌
+
+#Notificationsearch
+def extractnotification(rawresult):
+    extractedresult={}
+    
+    if rawresult['retweeted_status']['full_text']:
+        searched_id.append(rawresult['id'])
+        extractedresult['Group']=rawresult['entities']['user_mentions'][0]['name'] #이름어떻게 하지?
+        extractedresult['Notification']=rawresult['retweeted_status']['full_text']
+
+        return extractedresult
+
+    else:
+        
         return None
 
-def extractfantweets(rawresults):
-    for i in range(len(rawresults)):
-        if rawresults[i]['id'] in searched_id:
+def get_timeline_by_id(api,user):
+    timelines = tweepy.Cursor(api.user_timeline, id = user).items(100)
+    
+    return timelines
+#계정 넘겨주면 타임라인 100개 iterator로 반환해줌
+
+#Fantweetsearch
+def extractfantweetsfulltext(rawresult):
+    fantweetresult={}
+    
+    for i in range(len(rawresult)):
+        
+        if rawresult[i]['id'] in searched_id:
             continue
+        
         else:
-            fantweetresult={}
-            fantweetresult['user_name']=rawresults['entities']['user_mentions'][0]['name']
-            fantweetresult['user_screen_name']=rawresults['entities']['user_mentions'][0]['screen_name']
-            fantweetresult['created_at']=datetonumber(rawresults['created_at'])
-            fantweetresult['retweet_count']=rawresults['retweeted_status']['retweet_count']
-            fantweetresult['in_reply_to_status_id']=rawresults['in_reply_to_status_id']
-            fantweetresult['favorite_count']=rawresults['retweeted_status']['favorite_count']
-            fantweetresult['full_text']=rawresults['retweeted_status']['full_text']
+            fantweetresult['user_name']=rawresult['entities']['user_mentions'][0]['name']
+            fantweetresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
+            fantweetresult['created_at']=datetonumber(rawresult['created_at'])
+            fantweetresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
+            fantweetresult['in_reply_to_status_id']=rawresult['in_reply_to_status_id']
+            fantweetresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
+            fantweetresult['full_text']=rawresult['retweeted_status']['full_text']
+
+            return fantweetresult
+    #트윗하나가 지금까지 반환한것들중에 있는지 확인해주고 아니라면 필요정보만 모아서 반환해줌
+
+def extractfantweetswithouthastag(rawresult):
+    fantweetresult={}
+    
+    for i in range(len(rawresult)):
+        
+        if rawresult[i]['id'] in searched_id:
+            continue
+        
+        else:
+            fantweetresult['user_name']=rawresult['entities']['user_mentions'][0]['name']
+            fantweetresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
+            fantweetresult['created_at']=datetonumber(rawresult['created_at'])
+            fantweetresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
+            fantweetresult['in_reply_to_status_id']=rawresult['in_reply_to_status_id']
+            fantweetresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
+            fantweetresult['full_text']=text_without_hashtag(rawresult)
 
             return fantweetresult
 
-def extractfantweetswithouthastag(rawresults):
-    for i in range(len(rawresults)):
-        if rawresults[i]['id'] in searched_id:
+def extractfantweetsonlyhastag(rawresult):
+    fantweetresult={}
+    
+    for i in range(len(rawresult)):
+        
+        if rawresult[i]['id'] in searched_id:
             continue
+        
         else:
-            fantweetresult={}
-            fantweetresult['user_name']=rawresults['entities']['user_mentions'][0]['name']
-            fantweetresult['user_screen_name']=rawresults['entities']['user_mentions'][0]['screen_name']
-            fantweetresult['created_at']=datetonumber(rawresults['created_at'])
-            fantweetresult['retweet_count']=rawresults['retweeted_status']['retweet_count']
-            fantweetresult['in_reply_to_status_id']=rawresults['in_reply_to_status_id']
-            fantweetresult['favorite_count']=rawresults['retweeted_status']['favorite_count']
-            fantweetresult['full_text']=text_without_hashtag(rawresults)
-
-            return fantweetresult
-
-def extractfantweetsonlyhastag(rawresults):
-    for i in range(len(rawresults)):
-        if rawresults[i]['id'] in searched_id:
-            continue
-        else:
-            fantweetresult={}
-            fantweetresult['user_name']=rawresults['entities']['user_mentions'][0]['name']
-            fantweetresult['user_screen_name']=rawresults['entities']['user_mentions'][0]['screen_name']
-            fantweetresult['created_at']=datetonumber(rawresults['created_at'])
-            fantweetresult['retweet_count']=rawresults['retweeted_status']['retweet_count']
-            fantweetresult['in_reply_to_status_id']=rawresults['in_reply_to_status_id']
-            fantweetresult['favorite_count']=rawresults['retweeted_status']['favorite_count']
-            fantweetresult['full_text']=rawresults['retweeted_status']['entities']['hashtags']
+            fantweetresult['user_name']=rawresult['entities']['user_mentions'][0]['name']
+            fantweetresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
+            fantweetresult['created_at']=datetonumber(rawresult['created_at'])
+            fantweetresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
+            fantweetresult['in_reply_to_status_id']=rawresult['in_reply_to_status_id']
+            fantweetresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
+            fantweetresult['full_text']=rawresult['retweeted_status']['entities']['hashtags']
 
             return fantweetresult
