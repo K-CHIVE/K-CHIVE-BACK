@@ -63,7 +63,7 @@ def connect_api() :
 
 def get_tweet_by_keyword(api, keyword) :
     cursor = tweepy.Cursor(api.search_tweets, keyword, tweet_mode = 'extended')
-    return cursor.items()
+    return cursor.items(30)
 
 # 트위터 response 전처리하는 함수
 def parse_tweet_response(info) : 

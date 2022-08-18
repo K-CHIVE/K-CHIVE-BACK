@@ -92,7 +92,7 @@ class GroupNotificationListView(APIView):
     # 필터 목록 (127.0.0.1:8000/food-search/groupnotifications/group=그룹명&startDate=시작날짜(여섯자리 ex)220819)&endDate=종료날짜(여섯자리 ex)220819))
     def get(self, request) :
         api = connect_api()
-        groupnotification = GroupNotification.objects.filter(name = self.request.query_params.get('group')).first()
+        groupnotification = GroupNotification.objects.filter(refergroup = self.request.query_params.get('group')).first()
         startdate=self.request.query_params.get('startDate')
         enddate=self.request.query_params.get('endDate')
         #membernotification = Member.objects.filter(group = groupnotification).filter(name = self.request.query_params.get('member')).first()

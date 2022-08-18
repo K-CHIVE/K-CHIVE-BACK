@@ -37,9 +37,9 @@ def filter_by_daterange(startdate,enddate,objectdict):
         
         return objectdict
     
-    else:
+    # else:
         
-        return None
+    #     return None
     #트윗하나가 해당 날짜 안에 들어있는지 확인하고 조건이 충족하면 반환해줌
 #searchtypefilter(hashtag)
 def text_without_hashtag(rawresult):
@@ -80,9 +80,9 @@ def extract(rawresult):
         
         return extractedresult
     
-    else:
+    # else:
         
-        return None
+    #     return None
     #트윗하나를 필요한정보만 추출해줌
 
 #Notificationsearch
@@ -96,12 +96,12 @@ def extractnotification(rawresult):
 
         return extractedresult
 
-    else:
+    # else:
         
-        return None
+    #     return None
 
 def get_timeline_by_id(api,user):
-    timelines = tweepy.Cursor(api.user_timeline, id = user).items(100)
+    timelines = tweepy.Cursor(api.user_timeline,screen_name=user).items(30)
     
     return timelines
 #계정 넘겨주면 타임라인 100개 iterator로 반환해줌
