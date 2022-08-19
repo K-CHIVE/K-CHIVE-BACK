@@ -37,9 +37,9 @@ def filter_by_daterange(startdate,enddate,objectdict):
         
         return objectdict
     
-    # else:
+    else:
         
-    #     return None
+        return None
     #트윗하나가 해당 날짜 안에 들어있는지 확인하고 조건이 충족하면 반환해줌
 #searchtypefilter(hashtag)
 def text_without_hashtag(rawresult):
@@ -72,10 +72,17 @@ def extract(rawresult):
         extractedresult['user_name']=rawresult['user']['name']
         extractedresult['user_screen_name']=rawresult['user']['screen_name']
         extractedresult['created_at']=datetonumber(rawresult['created_at'])
+        extractedresult['created_at']=rawresult['created_at']
         extractedresult['retweet_count']=rawresult['retweet_count']
         extractedresult['favorite_count']=rawresult['favorite_count']
         extractedresult['media_url']=rawresult['retweeted_status']['extended_entities']['media'][0]["media_url"]
         extractedresult['tweet_url']='https://twitter.com/' + extractedresult['user_screen_name'] + '/status/' + str(rawresult['id'])
+        if 'extended_entities' in rawresult :
+            medias = rawresult['retweeted_status']['extended_entities']['media']
+            if medias == None : 
+                print('1111111111111')
+                return 0
+            extractedresult['media_url'] = [media['media_url'] for media in medias]
         
         return extractedresult
     
@@ -88,8 +95,8 @@ def extract(rawresult):
 def extractnotification(rawresult):
     extractedresult={}
     
-    # if rawresult['retweeted_status']['full_text']:
-        # searched_id.append(rawresult['id'])
+    if rawresult['retweeted_status']['full_text']:
+        searched_id.append(rawresult['id'])
     extractedresult['Group']=rawresult['user']['name'] #이름어떻게 하지?
     extractedresult['Notification']=rawresult['full_text'].replace(rawresult['retweeted_status']['extended_entities']['media'][0]['url'],'')
 

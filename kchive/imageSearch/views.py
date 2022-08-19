@@ -22,7 +22,7 @@ class ContentsListView(APIView):
         #그룹의 그룹 태그대로 트위터 서치하고 생성 날짜 내림차순으로 그룹태그에 대한 트윗 리스트 반환
 
     def member_contentsearch(self, api, member_tag) :
-        print(member_tag)
+
         member_contentresults = []
         tweets = get_tweet_by_keyword(api, member_tag)
 
@@ -92,7 +92,10 @@ class GroupNotificationListView(APIView):
     # 필터 목록 (127.0.0.1:8000/image-search/groupnotifications/group=그룹명&startDate=시작날짜(여섯자리 ex)220819)&endDate=종료날짜(여섯자리 ex)220819))
     def get(self, request) :
         api = connect_api()
-        groupnotification = GroupNotification.objects.filter(refergroup = self.request.query_params.get('group')).first()
+        print('aaaa')
+        groupnotification = GroupNotification.objects.filter(refergroup = self.request.query_params.get('group'))
+        print('bbb')
+        print(groupnotification)
         startdate=self.request.query_params.get('startDate')
         enddate=self.request.query_params.get('endDate')
         #membernotification = Member.objects.filter(group = groupnotification).filter(name = self.request.query_params.get('member')).first()
@@ -101,7 +104,7 @@ class GroupNotificationListView(APIView):
             return HttpResponse(status = 400)
         
         else : 
-            group_notificationresults = self.group_notificationsearch(api, groupnotification.refergroup)
+            group_notificationresults = self.group_notificationsearch(api, groupnotification.officialaccounts_id)
             group_notificationresults=filtered_by_daterange(startdate,enddate,group_notificationresults)
             return HttpResponse(status = 200, content=json.dumps(group_notificationresults))
     
