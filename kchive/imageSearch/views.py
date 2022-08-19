@@ -15,8 +15,9 @@ class ContentsListView(APIView):
 
         for i, tweet in enumerate(tweets) :
             if 'retweeted_status' in tweet._json : 
-                tmp = extract(tweet._json)                    
-                group_contentresults.append(tmp)
+                tmp = extract(tweet._json)
+                if tmp :            
+                    group_contentresults.append(tmp)
 
         return sorted(group_contentresults, key = lambda x : x['created_at'], reverse=True)
         #그룹의 그룹 태그대로 트위터 서치하고 생성 날짜 내림차순으로 그룹태그에 대한 트윗 리스트 반환
@@ -29,7 +30,8 @@ class ContentsListView(APIView):
         for i, tweet in enumerate(tweets) :
             if 'retweeted_status' in tweet._json : 
                 tmp = extract(tweet._json)
-                member_contentresults.append(tmp)     
+                if tmp : 
+                    member_contentresults.append(tmp)     
 
         return sorted(member_contentresults, key = lambda x : x['created_at'], reverse=True)
         #그룹의 그룹 태그대로 트위터 서치하고 생성 날짜 내림차순으로 그룹태그에 대한 트윗 리스트 반환
@@ -49,15 +51,14 @@ class ContentsListView(APIView):
             return HttpResponse(status = 400)
         #등록되지 않은 그룹이면 400반환
         
-        if member and member.tag1 : 
-            member_contentresults = self.member_contentsearch(api, member.tag1)
-            member_contentresults=filtered_by_daterange(startdate,enddate,member_contentresults)
-
+        if member : 
+            member_contentresults = self.member_contentsearch(api, member.name)
+            # member_contentresults=filtered_by_daterange(startdate,enddate,member_contentresults)
             return HttpResponse(status = 200, content=json.dumps(member_contentresults))
         #멤버가 있고 멤버태그가 있다면 멤버 콘텐츠서치해줌. 서치한 트윗들로 구성된 리스트들 반환하고 다시 날짜에 적합한 것으로 반환
         else : 
-            group_contentresults = self.group_contentsearch(api, group.tag1)
-            group_contentresults=filtered_by_daterange(startdate,enddate,group_contentresults)
+            group_contentresults = self.group_contentsearch(api, group.name)
+            # group_contentresults=filtered_by_daterange(startdate,enddate,group_contentresults)
             return HttpResponse(status = 200, content=json.dumps(group_contentresults))
         #멤버 없으면 그냥 그룹단위 콘텐츠서치해줌. 서치한 트윗들로 구성된 리스트들 반환하고 다시 날짜에 적합한 것으로 반환
 

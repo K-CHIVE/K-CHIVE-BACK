@@ -66,29 +66,22 @@ def filtered_by_daterange(startdate,enddate,objects):
 #contentssearch
 def extract(rawresult):
     extractedresult={}
-    
-    if rawresult['retweeted_status']["extended_entities"]['media'][0]['type']=='photo':
-        searched_id.append(rawresult['id'])
-        extractedresult['user_name']=rawresult['user']['name']
-        extractedresult['user_screen_name']=rawresult['user']['screen_name']
-        extractedresult['created_at']=datetonumber(rawresult['created_at'])
-        extractedresult['created_at']=rawresult['created_at']
-        extractedresult['retweet_count']=rawresult['retweet_count']
-        extractedresult['favorite_count']=rawresult['favorite_count']
-        extractedresult['media_url']=rawresult['retweeted_status']['extended_entities']['media'][0]["media_url"]
-        extractedresult['tweet_url']='https://twitter.com/' + extractedresult['user_screen_name'] + '/status/' + str(rawresult['id'])
-        if 'extended_entities' in rawresult :
+    if 'extended_entities' in rawresult['retweeted_status'] and 'media' in rawresult['retweeted_status']["extended_entities"] :
+        if rawresult['retweeted_status']["extended_entities"]['media'][0]['type']=='photo' :
+            searched_id.append(rawresult['id'])
+            extractedresult['user_name']=rawresult['user']['name']
+            extractedresult['user_screen_name']=rawresult['user']['screen_name']
+            extractedresult['created_at'] = rawresult['created_at']
+            extractedresult['retweet_count']=rawresult['retweet_count']
+            extractedresult['favorite_count']=rawresult['favorite_count']
+            extractedresult['media_url']=rawresult['retweeted_status']['extended_entities']['media'][0]["media_url"]
+            extractedresult['tweet_url']='https://twitter.com/' + extractedresult['user_screen_name'] + '/status/' + str(rawresult['id'])
             medias = rawresult['retweeted_status']['extended_entities']['media']
-            if medias == None : 
-                print('1111111111111')
-                return 0
             extractedresult['media_url'] = [media['media_url'] for media in medias]
-        
-        return extractedresult
-    
-    # else:
-        
-    #     return None
+            return extractedresult
+        return None
+    return None
+
     #트윗하나를 필요한정보만 추출해줌
 
 #Notificationsearch
