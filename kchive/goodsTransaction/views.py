@@ -44,14 +44,18 @@ class GoodsListView(APIView):
             # print(status["entities"]["media"]
             #       if hasattr(status, "entities") else [])
             # print(status["entities"]["media"][0]["media_url"])
-            print(status["retweeted_status"]["entities"]
-                  ["media"][0]["media_url_https"] if hasattr(status, "retweeted_status") else [])
-
-            if index >= 100:
-                break
-            posting = Posting(status["id_str"], status["created_at"], status.entities.hashtag if hasattr(status, 'entities.hashtag') else [], status["full_text"], status["entities"]["urls"]["url"] if hasattr(status["entities"], "urls") else [], status["retweet_count"],
-                              status["favorite_count"], status["user"]["screen_name"], status["user"]["name"], status["user"]["profile_image_url"], status["entities"]["media"][0]["media_url"] if hasattr(status["entities"], "media") else [])
-            result.append(vars(posting))
+            if 'retweeted_status' in status : 
+                if index >= 100:
+                    break
+                if 'extended_entities' in status['retweeted_status'] :
+                    medias = status['retweeted_status']['extended_entities']['media']
+                    media_urls = [media['media_url'] for media in medias]
+                else :
+                    media_urls = []
+                tweet_url = 'https://twitter.com/' + status['entities']['user_mentions'][0]['screen_name'] + '/status/' + str(status['id'])
+                posting = Posting(status["id_str"], status["created_at"], status.entities.hashtag if hasattr(status, 'entities.hashtag') else [], status["full_text"], tweet_url, status["retweet_count"],
+                                status["favorite_count"], status["user"]["screen_name"], status["user"]["name"], status["user"]["profile_image_url"], media_urls)
+                result.append(vars(posting))
 
         print("검색 성공")
         # print(result)
