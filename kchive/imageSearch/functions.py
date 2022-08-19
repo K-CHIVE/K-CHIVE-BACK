@@ -97,13 +97,18 @@ def extractnotification(rawresult):
     
     if rawresult['retweeted_status']['full_text']:
         searched_id.append(rawresult['id'])
-    extractedresult['Group']=rawresult['user']['name'] #이름어떻게 하지?
-    extractedresult['Notification']=rawresult['full_text'].replace(rawresult['retweeted_status']['extended_entities']['media'][0]['url'],'')
-
+        extractedresult['user_name']=rawresult['user']['name']
+        extractedresult['user_screen_name']=rawresult['user']['screen_name']
+        extractedresult['created_at'] = rawresult['created_at']
+        extractedresult['Group']=rawresult['user']['name'] #이름어떻게 하지?
+        extractedresult['tweet_url']='https://twitter.com/' + extractedresult['user_screen_name'] + '/status/' + str(rawresult['id'])
+        simple_url_index = rawresult['retweeted_status']['full_text'].find('http')
+        extractedresult['Notification']=rawresult['retweeted_status']['full_text'][:simple_url_index]
+        
     return extractedresult
 
 def get_timeline_by_id(api,user):
-    timelines = tweepy.Cursor(api.user_timeline,screen_name=user).items(30)
+    timelines = tweepy.Cursor(api.user_timeline,screen_name=user, tweet_mode = 'extended').items(30)
     
     return timelines
 #계정 넘겨주면 타임라인 100개 iterator로 반환해줌

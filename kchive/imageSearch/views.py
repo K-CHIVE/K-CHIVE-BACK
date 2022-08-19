@@ -92,12 +92,10 @@ class GroupNotificationListView(APIView):
     # 필터 목록 (127.0.0.1:8000/image-search/groupnotifications/group=그룹명&startDate=시작날짜(여섯자리 ex)220819)&endDate=종료날짜(여섯자리 ex)220819))
     def get(self, request) :
         api = connect_api()
-        print('aaaa')
-        groupnotification = GroupNotification.objects.filter(refergroup = self.request.query_params.get('group'))
-        print('bbb')
-        print(groupnotification)
-        startdate=self.request.query_params.get('startDate')
-        enddate=self.request.query_params.get('endDate')
+        refergroup = Group.objects.filter(name = self.request.query_params.get('group')).first()
+        groupnotification = GroupNotification.objects.filter(refergroup = refergroup).first()
+        # startdate=self.request.query_params.get('startDate')
+        # enddate=self.request.query_params.get('endDate')
         #membernotification = Member.objects.filter(group = groupnotification).filter(name = self.request.query_params.get('member')).first()
 
         if not groupnotification : 
@@ -105,7 +103,7 @@ class GroupNotificationListView(APIView):
         
         else : 
             group_notificationresults = self.group_notificationsearch(api, groupnotification.officialaccounts_id)
-            group_notificationresults=filtered_by_daterange(startdate,enddate,group_notificationresults)
+            # group_notificationresults=filtered_by_daterange(startdate,enddate,group_notificationresults)
             return HttpResponse(status = 200, content=json.dumps(group_notificationresults))
     
 class FantweetListView(APIView) :
