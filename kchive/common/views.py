@@ -78,8 +78,13 @@ def parse_tweet_response(info) :
     tmp['retweet_count'] = info['retweeted_status']['retweet_count']
     tmp['favorite_count'] = info['retweeted_status']['favorite_count']
     # tmp['user_name'] = info['user']['name']
-    tmp['user_screen_name'] = info['entities']['user_mentions'][0]['screen_name']
-    tmp['user_name'] = info['entities']['user_mentions'][0]['name']
+    if 'user_mentions' in info['entities'] and len(info['entities']['user_mentions']) : 
+        tmp['user_screen_name'] = info['entities']['user_mentions'][0]['screen_name']
+        tmp['user_name'] = info['entities']['user_mentions'][0]['name']
+    else :
+        tmp['user_screen_name'] = "anoymous user"
+        tmp['user_name'] = "anoymous user"
+
     tmp['user_profile_image_url'] = info['user']['profile_image_url']
 
     if 'extended_entities' in info['retweeted_status'] :
