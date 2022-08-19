@@ -16,6 +16,6 @@ from .models import *
 # admin.site.register(Notice,NoticesAdmin)
 # admin.site.register(Fantweet,FanTweetsAdmin)
 class GroupNotificationAdmin(admin.ModelAdmin):
-    list_display= ('refergroup','officialaccounts','officialaccounts_id','scheduleaccount','scheduleaccount_id')
+    list_display= ('refergroup','officialaccounts_id','officialaccounts','scheduleaccount_id','scheduleaccount')
 
 admin.site.register(GroupNotification,GroupNotificationAdmin)

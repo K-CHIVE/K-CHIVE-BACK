@@ -89,7 +89,7 @@ class GroupNotificationListView(APIView):
     #     return sorted(member_notificationresults, key = lambda x : x['created_at'], reverse=True)
         #멤버태그대로 트윗 서치하고 생성 날짜 내림차순으로 리스트반환
 
-    # 필터 목록 (127.0.0.1:8000/food-search/groupnotifications/group=그룹명&startDate=시작날짜(여섯자리 ex)220819)&endDate=종료날짜(여섯자리 ex)220819))
+    # 필터 목록 (127.0.0.1:8000/image-search/groupnotifications/group=그룹명&startDate=시작날짜(여섯자리 ex)220819)&endDate=종료날짜(여섯자리 ex)220819))
     def get(self, request) :
         api = connect_api()
         groupnotification = GroupNotification.objects.filter(refergroup = self.request.query_params.get('group')).first()
@@ -139,13 +139,13 @@ class FantweetListView(APIView) :
                     tmp = extractfantweetsonlyhastag(tweet._json)
                     member_fantweetresults.append(tmp) 
 
-                if searchtype=='withouthastag':
+                if searchtype=='withouthashtag':
                     tmp = extractfantweetswithouthastag(tweet._json)
                     member_fantweetresults.append(tmp) 
         return sorted(member_fantweetresults, key = lambda x : x['created_at'], reverse=True)
    
 
-    # 필터 목록 (127.0.0.1:8000/food-search?group=그룹명&member=멤버명&search=검색어&startDate=시작날짜&endDate=종료날짜)
+    # 필터 목록 (127.0.0.1:8000/image-search?group=그룹명&member=멤버명&searchtype=검색형식&startDate=시작날짜&endDate=종료날짜)
     def get(self, request) :
         api = connect_api()
 

@@ -59,10 +59,11 @@ from common.models import Group
 
 class GroupNotification(models.Model):
     refergroup=models.ForeignKey(Group,verbose_name='해당그룹',on_delete=models.CASCADE)
-    officialaccounts=models.CharField(max_length=50,verbose_name='공식계정',blank=True)
     officialaccounts_id=models.CharField(max_length=15,verbose_name='공식계정id',blank=True)
-    scheduleaccount=models.CharField(max_length=50,verbose_name='일정계정',blank=True,null=True)
+    officialaccounts=models.CharField(max_length=50,verbose_name='공식계정',blank=True)
     scheduleaccount_id=models.CharField(max_length=15,verbose_name='일정계정_id',blank=True,null=True)
+    scheduleaccount=models.CharField(max_length=50,verbose_name='일정계정',blank=True,null=True)
+    
 
     def __str__(self):
         return str(self.refergroup)+'공식일정'
