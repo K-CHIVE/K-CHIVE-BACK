@@ -44,6 +44,7 @@ ACCESS_TOKEN_SECRET = get_secret("ACCESS_TOKEN_SECRET")
 DEBUG = True
 
 ALLOWED_HOSTS = ['52.79.132.135']
+# '52.79.132.135'
 
 
 # Application definition
@@ -64,6 +65,9 @@ INSTALLED_APPS = [
 
     # drf
     'rest_framework',
+
+    # cors
+    'corsheader'
     
 ]
 
@@ -75,7 +79,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000' ,'http://localhost:3000']
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'kchive.urls'
 
