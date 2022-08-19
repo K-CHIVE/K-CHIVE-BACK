@@ -75,7 +75,7 @@ def extract(rawresult):
         extractedresult['retweet_count']=rawresult['retweet_count']
         extractedresult['favorite_count']=rawresult['favorite_count']
         extractedresult['media_url']=rawresult['retweeted_status']['extended_entities']['media'][0]["media_url"]
-        extractedresult['tweet_url']=rawresult['retweeted_status']['extended_entities']['media'][0]['url']
+        extractedresult['tweet_url']='https://twitter.com/' + extractedresult['user_screen_name'] + '/status/' + str(rawresult['id'])
         
         return extractedresult
     
@@ -117,7 +117,7 @@ def extractfantweetsfulltext(rawresult):
             fantweetresult['retweet_count']=rawresult['retweet_count']
             fantweetresult['favorite_count']=rawresult['favorite_count']
             fantweetresult['full_text']=rawresult['full_text'].replace(rawresult['retweeted_status']['extended_entities']['media'][0]['url'],'')
-            fantweetresult['tweet_url']=rawresult['retweeted_status']['extended_entities']['media'][0]['url']
+            fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
 
             return fantweetresult
     #트윗하나가 지금까지 반환한것들중에 있는지 확인해주고 아니라면 필요정보만 모아서 반환해줌
@@ -137,7 +137,7 @@ def extractfantweetswithouthastag(rawresult):
             fantweetresult['retweet_count']=rawresult['retweet_count']
             fantweetresult['favorite_count']=rawresult['favorite_count']
             fantweetresult['full_text']=text_without_hashtag(rawresult)
-            fantweetresult['tweet_url']=rawresult['retweeted_status']['extended_entities']['media'][0]['url']
+            fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
 
             return fantweetresult
 
@@ -154,8 +154,8 @@ def extractfantweetsonlyhastag(rawresult):
             fantweetresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
             fantweetresult['created_at']=datetonumber(rawresult['created_at'])
             fantweetresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
-            fantweetresult['in_reply_to_status_id']=rawresult['in_reply_to_status_id']
             fantweetresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
             fantweetresult['full_text']=rawresult['retweeted_status']['entities']['hashtags']
+            fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
 
             return fantweetresult
