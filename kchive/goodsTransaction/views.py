@@ -5,9 +5,6 @@ from common.views import connect_api, get_tweet_by_keyword
 from django.http import HttpResponse
 from pprint import pprint
 
-# Create your views here.
-
-
 class Posting:
     def __init__(self, id, created_at, hashtags, full_text, tweet_url, retweet_count,  favorite_count, user_screen_name, user_name, user_profile_image_url, media_url):
         self.id = id
