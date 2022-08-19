@@ -43,7 +43,7 @@ ACCESS_TOKEN_SECRET = get_secret("ACCESS_TOKEN_SECRET")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['52.79.132.135']
 
 
 # Application definition
