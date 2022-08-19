@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # cors
-    'corsheader'
+    'corsheaders'
     
 ]
 
