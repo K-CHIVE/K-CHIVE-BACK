@@ -163,12 +163,12 @@ class FantweetListView(APIView) :
         
         if member and member.tag1 : 
             member_results = self.member_fantweetsearch(api, member.tag1,searchtype)
-            member_results=filtered_by_daterange(startdate,enddate,member_results)
+            #member_results=filtered_by_daterange(startdate,enddate,member_results)
             return HttpResponse(status = 200, content=json.dumps(member_results))
 
         else : 
             group_results = self.group_fantweetsearch(api, group.tag1,searchtype)
-            group_results=filtered_by_daterange(startdate,enddate,group_results)
+            #group_results=filtered_by_daterange(startdate,enddate,group_results)
             return HttpResponse(status = 200, content=json.dumps(group_results)) 
     
 

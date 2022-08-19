@@ -14,7 +14,7 @@ from common.views import connect_api, get_tweet_by_keyword, parse_tweet_response
 from .models import GroupNotification
 import tweepy
 
-searched_id=[]
+# searched_id=[]
 #daterangefilter
 def datetonumber(date):
     Dow,Month,Date,Time,Nation,Year=date.split()
@@ -68,7 +68,7 @@ def extract(rawresult):
     extractedresult={}
     if 'extended_entities' in rawresult['retweeted_status'] and 'media' in rawresult['retweeted_status']["extended_entities"] :
         if rawresult['retweeted_status']["extended_entities"]['media'][0]['type']=='photo' :
-            searched_id.append(rawresult['id'])
+            # searched_id.append(rawresult['id'])
             extractedresult['user_name']=rawresult['user']['name']
             extractedresult['user_screen_name']=rawresult['user']['screen_name']
             extractedresult['created_at'] = rawresult['created_at']
@@ -89,7 +89,7 @@ def extractnotification(rawresult):
     extractedresult={}
     
     if rawresult['retweeted_status']['full_text']:
-        searched_id.append(rawresult['id'])
+        # searched_id.append(rawresult['id'])
         extractedresult['user_name']=rawresult['user']['name']
         extractedresult['user_screen_name']=rawresult['user']['screen_name']
         extractedresult['created_at'] = rawresult['created_at']
@@ -112,19 +112,17 @@ def extractfantweetsfulltext(rawresult):
     
     for i in range(len(rawresult)):
         
-        if rawresult[i]['id'] in searched_id:
-            continue
-        
-        else:
-            fantweetresult['user_name']=rawresult['user']['name']
-            fantweetresult['user_screen_name']=rawresult['user']['screen_name']
-            fantweetresult['created_at']=datetonumber(rawresult['created_at'])
-            fantweetresult['retweet_count']=rawresult['retweet_count']
-            fantweetresult['favorite_count']=rawresult['favorite_count']
-            fantweetresult['full_text']=rawresult['full_text'].replace(rawresult['retweeted_status']['extended_entities']['media'][0]['url'],'')
-            fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
 
-            return fantweetresult
+        fantweetresult['user_name']=rawresult['user']['name']
+        fantweetresult['user_screen_name']=rawresult['user']['screen_name']
+        fantweetresult['created_at']=(rawresult['created_at'])
+        #datetonumber
+        fantweetresult['retweet_count']=rawresult['retweet_count']
+        fantweetresult['favorite_count']=rawresult['favorite_count']
+        fantweetresult['full_text']=rawresult['full_text'].replace(rawresult['retweeted_status']['extended_entities']['media'][0]['url'],'')
+        fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
+
+        return fantweetresult
     #트윗하나가 지금까지 반환한것들중에 있는지 확인해주고 아니라면 필요정보만 모아서 반환해줌
 
 def extractfantweetswithouthastag(rawresult):
@@ -132,35 +130,36 @@ def extractfantweetswithouthastag(rawresult):
     
     for i in range(len(rawresult)):
         
-        if rawresult[i]['id'] in searched_id:
-            continue
+        # if rawresult[i]['id'] in searched_id:
+        #     continue
         
-        else:
-            fantweetresult['user_name']=rawresult['user']['name']
-            fantweetresult['user_screen_name']=rawresult['user']['screen_name']
-            fantweetresult['created_at']=datetonumber(rawresult['created_at'])
-            fantweetresult['retweet_count']=rawresult['retweet_count']
-            fantweetresult['favorite_count']=rawresult['favorite_count']
-            fantweetresult['full_text']=text_without_hashtag(rawresult)
-            fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
+        # else:
+        fantweetresult['user_name']=rawresult['user']['name']
+        fantweetresult['user_screen_name']=rawresult['user']['screen_name']
+        fantweetresult['created_at']=(rawresult['created_at'])
+        #datetonumber
+        fantweetresult['retweet_count']=rawresult['retweet_count']
+        fantweetresult['favorite_count']=rawresult['favorite_count']
+        fantweetresult['full_text']=text_without_hashtag(rawresult)
+        fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
 
-            return fantweetresult
+        return fantweetresult
 
 def extractfantweetsonlyhastag(rawresult):
     fantweetresult={}
     
     for i in range(len(rawresult)):
         
-        if rawresult[i]['id'] in searched_id:
-            continue
+        # if rawresult[i]['id'] in searched_id:
+        #     continue
         
-        else:
-            fantweetresult['user_name']=rawresult['entities']['user_mentions'][0]['name']
-            fantweetresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
-            fantweetresult['created_at']=datetonumber(rawresult['created_at'])
-            fantweetresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
-            fantweetresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
-            fantweetresult['full_text']=rawresult['retweeted_status']['entities']['hashtags']
-            fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
+        # else:
+        fantweetresult['user_name']=rawresult['entities']['user_mentions'][0]['name']
+        fantweetresult['user_screen_name']=rawresult['entities']['user_mentions'][0]['screen_name']
+        fantweetresult['created_at']=(rawresult['created_at'])
+        fantweetresult['retweet_count']=rawresult['retweeted_status']['retweet_count']
+        fantweetresult['favorite_count']=rawresult['retweeted_status']['favorite_count']
+        fantweetresult['full_text']=rawresult['retweeted_status']['entities']['hashtags']
+        fantweetresult['tweet_url']='https://twitter.com/' + fantweetresult['user_screen_name'] + '/status/' + str(rawresult['id'])
 
-            return fantweetresult
+        return fantweetresult
