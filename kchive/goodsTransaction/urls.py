@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import *
+from goodsTransaction import views
 
 urlpatterns = [
-    
+    path('', views.main, name="main"),
 ]

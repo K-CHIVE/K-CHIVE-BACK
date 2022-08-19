@@ -1,3 +1,6 @@
+# import sys
+# sys.path.append('C:/Users/wuchi/likelion/K-CHIVE-BACK/myvenv/Lib')
+# sys.path.append('C:/Users/wuchi/likelion/K-CHIVE-BACK/kchive/common')
 from enum import EnumMeta
 from rest_framework.views import APIView
 from .models import *

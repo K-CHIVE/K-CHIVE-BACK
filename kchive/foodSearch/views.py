@@ -51,6 +51,7 @@ class RestaurantListView(APIView) :
         api = connect_api()
 
         # 그룹은 무조건 있어야함 -> 일단 지금은 그룹 당 태그 하나로만 검색
+
         group = Group.objects.filter(name = self.request.query_params.get('group')).first()
         member = Member.objects.filter(group = group).filter(name = self.request.query_params.get('member')).first()
         search = self.request.query_params.get('search')
